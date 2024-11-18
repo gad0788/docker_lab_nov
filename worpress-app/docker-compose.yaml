@@ -1,0 +1,38 @@
+version: '3'
+services:
+  wordpress:
+    depends_on:
+        - mysql
+    image: wordpress:4.9.4-php7.2-apache
+    #container_name: wordpress
+    restart: always
+    environment:
+        - WORDPRESS_DB_USER=root
+        - WORDPRESS_DB_PASSWORD=db_password
+        - WORDPRESS_DB_HOST=mysql
+        - WORDPRESS_DB_NAME=webserver
+    ports:
+        - 8061:80
+    networks:
+        - web
+    volumes:
+        - wordpressdata:/var/www/html
+  mysql:
+    image: mariadb:10.4.12
+    #container_name: db
+    environment: 
+        - MYSQL_ROOT_PASSWORD=db_password
+        - MYSQL_USER=wp_user
+        - MYSQL_PASSWORD=wp_password
+        - MYSQL_DATABASE= webserver
+    networks:
+        - web
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+        - database:/var/lib/mysql
+networks:
+    web:
+      driver: bridge
+volumes:
+    wordpressdata:
+    database:
